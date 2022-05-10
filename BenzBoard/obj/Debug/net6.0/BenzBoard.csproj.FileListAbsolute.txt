@@ -1,5 +1,0 @@
-C:\Users\tdoug\source\repos\BenzBoard\obj\Debug\net6.0\BenzBoard.csproj.AssemblyReference.cache
-C:\Users\tdoug\source\repos\BenzBoard\obj\Debug\net6.0\BenzBoard.GeneratedMSBuildEditorConfig.editorconfig
-C:\Users\tdoug\source\repos\BenzBoard\obj\Debug\net6.0\BenzBoard.AssemblyInfoInputs.cache
-C:\Users\tdoug\source\repos\BenzBoard\obj\Debug\net6.0\BenzBoard.AssemblyInfo.cs
-C:\Users\tdoug\source\repos\BenzBoard\obj\Debug\net6.0\BenzBoard.csproj.CoreCompileInputs.cache
