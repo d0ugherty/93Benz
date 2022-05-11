@@ -1,0 +1,26 @@
+{
+  "Version": 1,
+  "ProjectMap": {
+    "80ede0bc-4895-4d29-b664-6243b28f9b82": {
+      "ProjectGuid": "80ede0bc-4895-4d29-b664-6243b28f9b82",
+      "DisplayName": "BenzChess",
+      "ColorIndex": 0
+    },
+    "689b9cbf-bc94-4401-9a35-f563f36a718c": {
+      "ProjectGuid": "689b9cbf-bc94-4401-9a35-f563f36a718c",
+      "DisplayName": "BenzBoard",
+      "ColorIndex": 1
+    },
+    "37c82356-c7cc-4928-95fb-f9db13b22b29": {
+      "ProjectGuid": "37c82356-c7cc-4928-95fb-f9db13b22b29",
+      "DisplayName": "NinetyThreeBenzEngine",
+      "ColorIndex": 2
+    },
+    "a2fe74e1-b743-11d0-ae1a-00a0c90fffc3": {
+      "ProjectGuid": "a2fe74e1-b743-11d0-ae1a-00a0c90fffc3",
+      "DisplayName": "Miscellaneous Files",
+      "ColorIndex": -1
+    }
+  },
+  "NextColorIndex": 3
+}

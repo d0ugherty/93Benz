@@ -1,0 +1,50 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v6.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v6.0": {
+      "BenzBoard/1.0.0": {
+        "dependencies": {
+          "BenzChess": "1.0.0",
+          "NinetyThreeBenzEngine": "1.0.0"
+        },
+        "runtime": {
+          "BenzBoard.dll": {}
+        }
+      },
+      "BenzChess/1.0.0": {
+        "runtime": {
+          "BenzChess.dll": {}
+        }
+      },
+      "NinetyThreeBenzEngine/1.0.0": {
+        "dependencies": {
+          "BenzChess": "1.0.0"
+        },
+        "runtime": {
+          "NinetyThreeBenzEngine.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "BenzBoard/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "BenzChess/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "NinetyThreeBenzEngine/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Diagnostics;
+using BenzChess;
 
-namespace BenzChess
+namespace NinetyThreeBenzEngine
 {
     /*
      * This Driver class is used for communication with the GUI
@@ -37,8 +38,6 @@ namespace BenzChess
 
                 }
             }
-
-
-        }
+         }
     }
 }

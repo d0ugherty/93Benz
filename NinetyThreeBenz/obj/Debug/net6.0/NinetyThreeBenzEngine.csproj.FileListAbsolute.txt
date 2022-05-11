@@ -1,0 +1,15 @@
+C:\Users\tdoug\source\repos\93Benz\NinetyThreeBenzEngine\bin\Debug\net6.0\NinetyThreeBenzEngine.exe
+C:\Users\tdoug\source\repos\93Benz\NinetyThreeBenzEngine\bin\Debug\net6.0\NinetyThreeBenzEngine.deps.json
+C:\Users\tdoug\source\repos\93Benz\NinetyThreeBenzEngine\bin\Debug\net6.0\NinetyThreeBenzEngine.runtimeconfig.json
+C:\Users\tdoug\source\repos\93Benz\NinetyThreeBenzEngine\bin\Debug\net6.0\NinetyThreeBenzEngine.dll
+C:\Users\tdoug\source\repos\93Benz\NinetyThreeBenzEngine\bin\Debug\net6.0\ref\NinetyThreeBenzEngine.dll
+C:\Users\tdoug\source\repos\93Benz\NinetyThreeBenzEngine\bin\Debug\net6.0\NinetyThreeBenzEngine.pdb
+C:\Users\tdoug\source\repos\93Benz\NinetyThreeBenzEngine\obj\Debug\net6.0\NinetyThreeBenzEngine.csproj.AssemblyReference.cache
+C:\Users\tdoug\source\repos\93Benz\NinetyThreeBenzEngine\obj\Debug\net6.0\NinetyThreeBenzEngine.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\tdoug\source\repos\93Benz\NinetyThreeBenzEngine\obj\Debug\net6.0\NinetyThreeBenzEngine.AssemblyInfoInputs.cache
+C:\Users\tdoug\source\repos\93Benz\NinetyThreeBenzEngine\obj\Debug\net6.0\NinetyThreeBenzEngine.AssemblyInfo.cs
+C:\Users\tdoug\source\repos\93Benz\NinetyThreeBenzEngine\obj\Debug\net6.0\NinetyThreeBenzEngine.csproj.CoreCompileInputs.cache
+C:\Users\tdoug\source\repos\93Benz\NinetyThreeBenzEngine\obj\Debug\net6.0\NinetyThreeBenzEngine.dll
+C:\Users\tdoug\source\repos\93Benz\NinetyThreeBenzEngine\obj\Debug\net6.0\ref\NinetyThreeBenzEngine.dll
+C:\Users\tdoug\source\repos\93Benz\NinetyThreeBenzEngine\obj\Debug\net6.0\NinetyThreeBenzEngine.pdb
+C:\Users\tdoug\source\repos\93Benz\NinetyThreeBenzEngine\obj\Debug\net6.0\NinetyThreeBenzEngine.genruntimeconfig.cache

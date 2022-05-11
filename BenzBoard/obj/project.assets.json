@@ -1,0 +1,117 @@
+{
+  "version": 3,
+  "targets": {
+    "net6.0-windows7.0": {
+      "BenzChess/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v6.0",
+        "compile": {
+          "bin/placeholder/BenzChess.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/BenzChess.dll": {}
+        }
+      },
+      "NinetyThreeBenzEngine/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v6.0",
+        "dependencies": {
+          "BenzChess": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/NinetyThreeBenzEngine.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/NinetyThreeBenzEngine.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "BenzChess/1.0.0": {
+      "type": "project",
+      "path": "../NinetyThreeBenz/BenzChess.csproj",
+      "msbuildProject": "../NinetyThreeBenz/BenzChess.csproj"
+    },
+    "NinetyThreeBenzEngine/1.0.0": {
+      "type": "project",
+      "path": "../NinetyThreeBenzEngine/NinetyThreeBenzEngine.csproj",
+      "msbuildProject": "../NinetyThreeBenzEngine/NinetyThreeBenzEngine.csproj"
+    }
+  },
+  "projectFileDependencyGroups": {
+    "net6.0-windows7.0": [
+      "BenzChess >= 1.0.0",
+      "NinetyThreeBenzEngine >= 1.0.0"
+    ]
+  },
+  "packageFolders": {
+    "C:\\Users\\tdoug\\.nuget\\packages\\": {},
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
+  },
+  "project": {
+    "version": "1.0.0",
+    "restore": {
+      "projectUniqueName": "C:\\Users\\tdoug\\source\\repos\\93Benz\\BenzBoard\\BenzBoard.csproj",
+      "projectName": "BenzBoard",
+      "projectPath": "C:\\Users\\tdoug\\source\\repos\\93Benz\\BenzBoard\\BenzBoard.csproj",
+      "packagesPath": "C:\\Users\\tdoug\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\tdoug\\source\\repos\\93Benz\\BenzBoard\\obj\\",
+      "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+      ],
+      "configFilePaths": [
+        "C:\\Users\\tdoug\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+      ],
+      "originalTargetFrameworks": [
+        "net6.0-windows7.0"
+      ],
+      "sources": {
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+        "https://api.nuget.org/v3/index.json": {}
+      },
+      "frameworks": {
+        "net6.0-windows7.0": {
+          "targetAlias": "net6.0-windows",
+          "projectReferences": {
+            "C:\\Users\\tdoug\\source\\repos\\93Benz\\NinetyThreeBenzEngine\\NinetyThreeBenzEngine.csproj": {
+              "projectPath": "C:\\Users\\tdoug\\source\\repos\\93Benz\\NinetyThreeBenzEngine\\NinetyThreeBenzEngine.csproj"
+            },
+            "C:\\Users\\tdoug\\source\\repos\\93Benz\\NinetyThreeBenz\\BenzChess.csproj": {
+              "projectPath": "C:\\Users\\tdoug\\source\\repos\\93Benz\\NinetyThreeBenz\\BenzChess.csproj"
+            }
+          }
+        }
+      },
+      "warningProperties": {
+        "warnAsError": [
+          "NU1605"
+        ]
+      }
+    },
+    "frameworks": {
+      "net6.0-windows7.0": {
+        "targetAlias": "net6.0-windows",
+        "imports": [
+          "net461",
+          "net462",
+          "net47",
+          "net471",
+          "net472",
+          "net48"
+        ],
+        "assetTargetFallback": true,
+        "warn": true,
+        "frameworkReferences": {
+          "Microsoft.NETCore.App": {
+            "privateAssets": "all"
+          }
+        },
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.101\\RuntimeIdentifierGraph.json"
+      }
+    }
+  }
+}
