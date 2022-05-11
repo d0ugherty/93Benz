@@ -1,6 +1,6 @@
 ﻿/////////////////////////////////////////////////////////////
-///***		
-///***
+/////////////////////////////////////////////////////////////	
+////////////////////////////////////////////////////////////
 ///***
 ///***		The BenzBoard program is used for
 ///***		visualizing any given board state 
@@ -10,8 +10,9 @@
 ///***
 ///***		The user is expected to enter a move into the command line
 ///***		in long-algebraic notation. ex: e2e4  (White King's pawn to square e4). The board state will
-///***    be printed for every 4-5 character chess move that is entered. Copy & paste from 
-///***    a log is the fastest method to print multiple moves.
+///***      be printed in for every 4-5 character chess move that is entered. Pieces on the board
+///***      are printed in FORSYTH-EDWARDS NOTATION. Copy & paste from 
+///***      a log is the fastest method to print multiple moves.
 ///***
 ______________________________________
 ///******EXAMPLE OUTPUT:
