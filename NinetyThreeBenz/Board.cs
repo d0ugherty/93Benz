@@ -122,6 +122,56 @@ namespace BenzChess
             boardState[move.ToIndex] = movingPiece;
             //clear previous square
             boardState[move.FromIndex] = Piece.None;
+
+            //handle castling (special case)
+            // 'out' keyword allows an un-declared/initialized paramter to be passed by reference
+            // (change value of the parameter, have that change persist thru calling environment)
+            if (IsCastle(movingPiece, move, out Move rookMove))
+            {
+                Play(rookMove);
+            }
+        }
+        /// <summary>
+        /// Checks to see if if the current move is a castling move.
+        /// 
+        /// 'out' keyoward allows an un-declared/initialized parameter to be passed by reference
+        /// into the method. useful for functions with multiple return values.
+        /// In this case, the boolean and the rook move.
+        /// </summary>
+        /// <param name="moving"></param>
+        /// <param name="kingMove"></param>
+        /// <param name="rookMove"></param>
+        /// <returns></returns>
+        public Boolean IsCastle(Piece moving, Move move, out Move rookMove)
+        {
+            //check if the moving piece is a king
+            if (moving.Equals(Piece.WhiteKing) || moving.Equals(Piece.BlackKing))
+            {
+                //is the move one of the 4 castling moves
+                if (move.Equals(Move.BlackCastlingShort))
+                {
+                    rookMove = Move.BlackCastlingShortRook;
+                    return true;
+                } else if (move.Equals(Move.BlackCastlingLong))
+                {
+                    rookMove = Move.BlackCastlingLongRook;
+                    return true;
+                } else if (move.Equals(Move.WhiteCastlingShort))
+                {
+                    rookMove = Move.WhiteCastlingShortRook;
+                    return true;
+                } else if (move.Equals(Move.WhiteCastlingLong))
+                {
+                    rookMove = Move.WhiteCastlingLongRook;
+                    return true;
+                } else
+                {
+                    rookMove = default;
+                    return false;
+                }
+            }
+            rookMove = default;
+            return false;
         }
     }
 }
