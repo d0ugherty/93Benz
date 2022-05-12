@@ -15,13 +15,15 @@ namespace NinetyThreeBenzEngine
     {
         static void Main(string[] args)
         {
+            Boolean running = true;
             //Infinite loop for Engine-Interface communication
-            while (true)
+            while (running)
             {
                 //Commmands from the Universal Chess Interface to the engine
                 //.Split() breaks a delineated string into substrings, needed to split parameters for the "go" command
-                string command = Console.ReadLine().Split()[0];
-                switch (command)
+                string input = Console.ReadLine();
+                string[] tokens = input.Split();
+                switch (input)
                 {
                     case "uci": //tells the engine to use the Universal Chess Interface
                         Console.WriteLine("uciok");
@@ -32,12 +34,23 @@ namespace NinetyThreeBenzEngine
                     case "go": //start calculating the position that was setup with "position" command
                         Console.WriteLine("bestmove e7e5"); //black king's pawn open
                         break;
+                    case "position":
+                        Engine.UCIPosition(tokens);
+                        break;
+                    case "ucinewgame":
+                        break;
+                    case "stop":
+                        break;
+                    case "quit":
+                        running = false;
+                        break;
                     default:
-                       // Debugger.Launch();
+                        // Debugger.Launch();
+                        Console.WriteLine("UNKNOWN INPUT " + input);
                         break;
 
                 }
             }
          }
-    }
+     }
 }
