@@ -8,8 +8,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\NinetyThreeBenzEngine\NinetyThreeBenzEngine.csproj" />
-    <ProjectReference Include="..\NinetyThreeBenz\BenzChess.csproj" />
+    <ProjectReference Include="..\NinetyThreeBenz\NinetyThreeBenzEngine.csproj" />
+    <ProjectReference Include="..\BenzChess\BenzChess.csproj" />
   </ItemGroup>
 
 </Project>

@@ -34,7 +34,7 @@ namespace NinetyThreeBenzEngine
                     case "go": //start calculating the position that was setup with "position" command
                         Console.WriteLine("bestmove e7e5"); //black king's pawn open
                         break;
-                    case "position":
+                    case "position": //set up the position described in fenstring on the internal board
                         Engine.UCIPosition(tokens);
                         break;
                     case "ucinewgame":

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -45,5 +46,66 @@ namespace BenzChess
             //the fifth character, if it is present, is the piece to which the pawn will be promoted to
             Promotion = (moveNotation.Length == 5) ? Notation.ToPiece(moveNotation[4]) : Piece.None;
         }
+        /// <summary>
+        /// Method that returns the move in long algebaric notation. 
+        /// 
+        /// using the += operator for concatenation instead of using a StringBuilder
+        /// object because the number of concatenations are known.
+        /// </summary>
+        /// <returns name='moveString'></returns>
+        public override string ToString()
+        {
+            string moveString = Notation.ToSquareName(FromIndex);
+            moveString += Notation.ToSquareName(ToIndex);
+            if(Promotion != Piece.None)
+            {
+                moveString += Notation.ToChar(Promotion);
+            }
+
+            return moveString;
+        }
+        /// <summary>
+        /// Override equals method to check equality
+        /// to other objects
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns bool></returns>
+        public override bool Equals(object obj)
+            
+        {
+            if(obj is Move move)
+            {
+                return this.Equals(move);
+            }
+            return false;
+        }
+       
+        /// <summary>
+        /// Override equals method to check equality
+        /// to other Move types
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns bool></returns>
+       
+        public bool Equals(Move other)
+        { 
+            if(this.Equals(other))
+            {
+                return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Override hashcode 
+        /// </summary>
+        /// <returns name = "hash"></returns>
+        public int HashCode()
+        {
+            int hash = 17;
+            hash = hash * 23 + FromIndex.GetHashCode();
+            return hash;
+        }
+        
     }
 }

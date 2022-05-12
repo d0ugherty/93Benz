@@ -125,6 +125,20 @@ namespace BenzChess
             Move move = new Move(moveNotation);
             return move;
         }
+        /// <summary>
+        /// Returns the square (a6, h8, etc.) as a string
+        /// </summary>
+        /// <param name="squareIndex"></param>
+        /// <returns></returns>
+        public static string ToSquareName(byte squareIndex)
+        {
+            int rank = squareIndex / 8;
+            int file = squareIndex % 8;
+
+            //Map file [0-7] to letters [a-h] and rank [0-7] to [1-8]
+            string squareNotation = $"{(char)('a' + file)}{rank + 1}";
+            return squareNotation;
+        }
     }
 }
 
