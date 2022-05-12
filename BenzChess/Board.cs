@@ -16,17 +16,16 @@ namespace BenzChess
      */
 
 
-    //      A  B  C  D  E  F  G  H
-    //  8   00 01 02 03 04 05 06 07  8     BLACK
-    //  7   08 09 10 11 12 13 14 15  7
-    //  6   16 17 18 19 20 21 22 23  6     
-    //  5   24 25 26 27 28 29 30 31  5     
-    //  4   32 33 34 35 36 37 38 39  4    
-    //  3   40 41 42 43 44 45 46 47  3     
-    //  2   48 49 50 51 52 53 54 55  2
-    //  1   56 57 58 59 60 61 62 63  1     WHITE
-    //      A  B  C  D  E  F  G  H
-    //         <- File ->
+    //    A  B  C  D  E  F  G  H        BLACK
+    // 8  56 57 58 59 60 61 62 63  8
+    // 7  48 49 50 51 52 53 54 55  7
+    // 6  40 41 42 43 44 45 46 47  6
+    // 5  32 33 34 35 36 37 38 39  5
+    // 4  24 25 26 27 28 29 30 31  4
+    // 3  16 17 18 19 20 21 22 23  3
+    // 2  08 09 10 11 12 13 14 15  2
+    // 1  00 01 02 03 04 05 06 07  1
+    //    A  B  C  D  E  F  G  H        WHITE
 
 
     public class Board
@@ -43,6 +42,9 @@ namespace BenzChess
         Piece[] _boardState = new Piece[64];
         //used to indicate which color is currently making a move
         bool _whiteMovesNext = false;
+
+        static int Rank(int square) => square / 8;
+        static int File(int square) => (square / 8) - 'a';
 
 
         //indexer to allow the instance of the Board class to be indexed like an array
@@ -149,7 +151,7 @@ namespace BenzChess
         /// <param name="kingMove"></param>
         /// <param name="rookMove"></param>
         /// <returns></returns>
-        public Boolean IsCastle(Piece moving, Move move, out Move rookMove)
+        private bool IsCastle(Piece moving, Move move, out Move rookMove)
         {
             //check if the moving piece is a king
             if (moving.Equals(Piece.WhiteKing) || moving.Equals(Piece.BlackKing))
@@ -198,11 +200,12 @@ namespace BenzChess
             {
                 if (_boardState[squareIndex] == Piece.None)
                     continue;
-                //is the piece of the active color
-                if ((_boardState[squareIndex] < Piece.BlackPawn) ^ _whiteMovesNext) //XOR
-                    continue;
 
+                if ((_boardState[squareIndex] < Piece.BlackPawn) ^ _whiteMovesNext)   //XOR
+                    continue;
+                    
                 AddLegalMoves(moves, squareIndex);
+                
             }
             return moves;
         }
@@ -214,18 +217,30 @@ namespace BenzChess
         /// </summary>
         /// <param name="moves"></param>
         /// <param name="squareIndex"></param>
-        public void AddLegalMoves(List<Move> moves, int squareIndex)
+        private void AddLegalMoves(List<Move> moves, int squareIndex)
         {
             switch(_boardState[squareIndex])
             {
                 case Piece.BlackPawn:
                     AddBlackPawnMoves(moves, squareIndex);
+                    AddBlackPawnAttacks(moves, squareIndex);
                     break;
                 case Piece.WhitePawn:
                     AddWhitePawnMoves(moves, squareIndex);
+                    AddWhitePawnAttacks(moves, squareIndex);
                     break;
             }
         }
+
+        /**************************************
+         **************************************
+         * 
+         *          PAWN MOVES  
+         *          
+         * ************************************
+         * ************************************
+         */
+
         /// <summary>
         /// Black and white pawns move differently from each other.
         /// White pawns moves up the ranks whereas black pawns move down. So the next
@@ -233,7 +248,7 @@ namespace BenzChess
         /// </summary>
         /// <param name="moves"></param>
         /// <param name="fromIndex"></param>
-        public void AddWhitePawnMoves(List<Move> moves, int fromIndex)
+        private void AddWhitePawnMoves(List<Move> moves, int fromIndex)
         {
             int aboveIndex = fromIndex + 8; //white pawns move up the ranks
             if (aboveIndex < 64 && _boardState[aboveIndex] == Piece.None)
@@ -247,15 +262,141 @@ namespace BenzChess
         /// </summary>
         /// <param name="moves"></param>
         /// <param name="fromIndex"></param>
-        public void AddBlackPawnMoves(List<Move> moves, int fromIndex)
+        private void AddBlackPawnMoves(List<Move> moves, int fromIndex)
         {
-            int belowIndex = fromIndex - 8; //black moves down the ranks
-            if(belowIndex >= 0 && _boardState[belowIndex] == Piece.None)
+            int belowIndex = fromIndex - 8;
+            if (belowIndex >= 0 && _boardState[belowIndex] == Piece.None)
             {
                 moves.Add(new Move((byte)fromIndex, (byte)belowIndex, Piece.None));
             }
         }
-       
+        /// <summary>
+        /// Offset for the diagonal pawn attack rules 
+        /// </summary>
+        /// <param name="moves"></param>
+        /// <param name="fromIndex"></param>
+        private void AddWhitePawnAttacks(List<Move> moves, int index)
+        {
+            int rank = Rank(index);
+            int file = File(index);
+
+            //check diagonal left
+            if (IsValidSquare(rank + 1, file - 1, out int upLeft, out Piece pieceLeft))
+            {
+                if (Pieces.IsBlack(pieceLeft))
+                {
+                    moves.Add(new Move((byte)index, (byte)upLeft, Piece.None));
+                }
+            }
+            //check diagonal right
+            if(IsValidSquare(rank + 1, file + 1, out int upRight, out Piece pieceRight))
+            {
+                if (Pieces.IsBlack(pieceRight))
+                {
+                    moves.Add(new Move((byte)index, (byte)upRight, Piece.None));
+                }
+            }
+        }
+
+        private static bool IsValidSquare(int rank, int file, out int upLeft, out Piece peiceLeft)
+        {
+            if()
+        }
+        
+
+        /// <summary>
+        /// Offset for the diagonal pawn attack rules 
+        /// </summary>
+        /// <param name="moves"></param>
+        /// <param name="fromIndex"></param
+        private void AddBlackPawnAttacks(List<Move> moves, int fromIndex)
+        {
+
+        }
+
+        /**************************************
+         **************************************
+         * 
+         *          ROOK MOVES 
+         *          
+         * ************************************
+         * ************************************
+         */
+        private void AddRookMoves(List<Move> moves, int fromIndex)
+        {
+
+        }
+        private void AddRookAttacks(List<Move> moves, int fromIndex)
+        {
+
+        }
+
+        /**************************************
+         **************************************
+         * 
+         *          KNIGHT MOVES 
+         *          
+         * ************************************
+         * ************************************
+         */
+        private void AddKnightMoves(List<Move> moves, int fromIndex)
+        {
+
+        }
+        private void AddWKnightAttacks(List<Move> moves, int fromIndex)
+        {
+
+        }
+
+        /**************************************
+         **************************************
+         * 
+         *          BISHOP MOVES  
+         *          
+         * ************************************
+         * ************************************
+         */
+        private void AddBishopMoves(List<Move> moves, int fromIndex)
+        {
+
+        }
+        private void AddWBishopAttacks(List<Move> moves, int fromIndex)
+        {
+
+        }
+        /**************************************
+         **************************************
+         * 
+         *          QUEEN MOVES  
+         *          
+         * ************************************
+         * ************************************
+         */
+        private void AddQueenMoves(List<Move> moves, int fromIndex)
+        {
+
+        }
+        public void AddQueenAttacks(List<Move> moves, int fromIndex)
+        {
+
+        }
+
+        /**************************************
+         **************************************
+         * 
+         *          KING MOVES 
+         *          
+         * ************************************
+         * ************************************
+         */
+        private void AddKingMoves(List<Move> moves, int fromIndex)
+        {
+
+        }
+        private void AddKingAttacks (List<Move> moves, int fromIndex)
+        {
+
+        }
         static void Main()
         {
         }

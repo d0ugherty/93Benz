@@ -25,4 +25,31 @@ namespace BenzChess
         BlackKing = 12,
 
     }
+    /**
+     * Functions for chess pieces
+     * 
+     */
+    public static class Pieces
+    {
+        /// <summary>
+        /// Check the color of the piece by comparing the int value
+        /// of the enum Piece. Black pieces should be > 6
+        /// </summary>
+        /// <param name="piece"></param>
+        /// <returns bool></returns>
+        public static bool IsBlack(Piece piece)
+        {
+            return ((int)piece > 6);
+        }
+        /// <summary>
+        /// Check the color of the piece by comparing the int value
+        /// of the enum Piece. White pieces should be < 7
+        /// </summary>
+        /// <param name="piece"></param>
+        /// <returns bool></returns>
+        public static bool IsWhite(Piece piece)
+        {
+            return ((int)piece < 7);
+        }
+    }
 }

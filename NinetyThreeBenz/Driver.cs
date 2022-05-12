@@ -15,7 +15,7 @@ namespace NinetyThreeBenzEngine
     {
         static void Main(string[] args)
         {
-            Boolean running = true;
+            bool running = true;
             //Infinite loop for Engine-Interface communication
             while (running)
             {
