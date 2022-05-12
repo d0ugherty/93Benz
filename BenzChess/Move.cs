@@ -100,7 +100,7 @@ namespace BenzChess
         /// Override hashcode 
         /// </summary>
         /// <returns name = "hash"></returns>
-        public int HashCode()
+        public override int GetHashCode()
         {
             int hash = 17;
             hash = hash * 23 + FromIndex.GetHashCode();

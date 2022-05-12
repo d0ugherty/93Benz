@@ -42,7 +42,7 @@ namespace BenzChess
         //array to represent board
         Piece[] _boardState = new Piece[64];
         //used to indicate which color is currently making a move
-        bool _whiteMovesNext = true;
+        bool _whiteMovesNext = false;
 
 
         //indexer to allow the instance of the Board class to be indexed like an array
@@ -255,24 +255,7 @@ namespace BenzChess
                 moves.Add(new Move((byte)fromIndex, (byte)belowIndex, Piece.None));
             }
         }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="moves"></param>
-        /// <param name="fromIndex"></param>
-        public void AppendWhitePawnMoves(List<Move> moves, int fromIndex)
-        {
-
-        }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="moves"></param>
-        /// <param name="fromIndex"></param>
-        public void AppendBlackPawnMoves(List<Move> moves, int fromIndex)
-        {
-
-        }
+       
         static void Main()
         {
         }
