@@ -1,12 +1,15 @@
 Following a tutorial for a basic chess engine.
 
 I'm fairly new the game of chess and became interested in how the AI worked in the online games I've played.
-I also wanted a fun way to learn the C# programming language. After I'm done following the tutorial to get
-a barebones engine built, I plan for this to be something I can come back to and build upon as I get more knowledgeable
+I also wanted a fun way to learn the C# programming language which is really what this project 
+is currently about, hence the excessive commenting and documentation. 
+
+After I'm done following the tutorial to get a barebones engine built, I plan for this to be 
+something I can come back to and build upon as I get more knowledgeable
 in topics like optimization and searching.
 
 
-This does not contain a GUI. To be useable, the executable file has to be loaded into a chess GUI such as APWin, Cute Chess, or XBoard. 
+This does not contain a GUI. To be useable, the executable file has to be loaded into a chess GUI such as APWin, Cute Chess, or WinBoard. 
 
 \NinetyThreeBenz\ contains the engine and the exe file
 
