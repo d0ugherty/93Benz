@@ -8,7 +8,7 @@ in topics like optimization and searching.
 
 This does not contain a GUI. To be useable, the executable file has to be loaded into a chess GUI such as APWin, Cute Chess, or XBoard. 
 
-\NinetyThreeBenz\ contains the engine.
+\NinetyThreeBenz\ contains the engine and the exe file
 
 \BenzChess\ contains the representation of a chess game. So Board, Piece, Notation, and Move classes/structs
 
