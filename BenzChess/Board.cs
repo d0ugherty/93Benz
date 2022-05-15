@@ -3,6 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Diagnostics;
+using System.IO;
+using System.Runtime.CompilerServices;
+using System.Security;
+using System.Runtime.Serialization;
 
 namespace BenzChess
 {
@@ -36,36 +41,54 @@ namespace BenzChess
         static readonly int BlackKingsideRookSquare = Notation.ToSquare("h8");
         static readonly int WhiteQueensideRookSquare = Notation.ToSquare("a1");
         static readonly int WhiteKingsideRookSquare = Notation.ToSquare("h1");
-        //chess board start state
+     
         public const string STARTING_POS_FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
-        //array to represent board
+
+       /*** State Data ****/
         Piece[] _boardState = new Piece[64];
-        //used to indicate which color is currently making a move
         bool _whiteMovesNext = false;
+        CastlingRights _castlingRights = CastlingRights.All;
+        Color _activeColor = Color.White;
+        Move _lastMove = default(Move);
+      
 
         static int Rank(int square) => square / 8;
         static int File(int square) => (square / 8) - 'a';
+        public Color ActiveColor => _activeColor;
 
-
-        //indexer to allow the instance of the Board class to be indexed like an array
+        /*** indexer to allow the instance of the Board class 
+         *  to be indexed like an array
+         */
+        public Piece this[int index]
+        {
+            get => _boardState[index];
+            set => _boardState[index] = value;
+        }
+     
         public Piece this[int rank, int file]
         {   //return the piece at boardState[board coordinates]
             get => _boardState[rank * 8 + file];
             set => _boardState[rank * 8 + file] = value;
         }
 
-        //Default constructor method
-        public Board()
-        { }
-        //Constructor method
-        public Board(string fen)
+        /****************
+         *  Constructors
+         ****************
+         */
+         public Board(string fen)
         {
             SetupPosition(fen);
         }
-        //constructor method
+        
         public Board(Board board)
         {
             Copy(board);
+        }
+
+        public Board(Board board, Move move)
+        {
+            Copy(board);
+            Play(move);
         }
         /// <summary>
         /// Sets up the board according a string paramter
@@ -107,14 +130,38 @@ namespace BenzChess
                 }
                 rank--;
             }
+            // Set side to move.  "CurrentCulture" means localized writing system, calendar, date formatting etc.
+            _activeColor = fields[1].Equals("w", StringComparison.CurrentCultureIgnoreCase) ? Color.White : Color.Black;
+
+            // set castling rights
+            SetCastlingRights(CastlingRights.WhiteQueenSide, fields[2].IndexOf("Q") > -1);
+            SetCastlingRights(CastlingRights.WhiteKingSide, fields[2].IndexOf("K") > -1);
+            SetCastlingRights(CastlingRights.BlackQueenSide, fields[2].IndexOf("q") > -1);
+            SetCastlingRights(CastlingRights.BlackKingSide, fields[2].IndexOf("k") > -1);
+
+            //Validate that pieces are the correct places indicated by castling rights
+
+            //set en passant square
+            int enPassantSquare = fields[3] == "-" ? -1 : Notation.ToSquare(fields[3]);
+            if(fields.Length == 6)
+            {
+                
+                //set half move count. one "move" in chess is a turn by each player.
+                int halfMoveCount = int.Parse(fields[4]);
+               // set full move number
+                int fullMoveNumber = int.Parse(fields[5]);
+            }
         }
         public void Copy(Board board)
         {
-            //Array.Copy(board.boardState, boardState, 64);
+            Array.Copy(board._boardState, _boardState, 64);
             //AsSpan provides access to contiguous regions of type-safe memory
             //useful for optimization and working with an array of data that doesn't change size
             //Span<T> is a ref struct thus has the limitations of one.
-            board._boardState.AsSpan().CopyTo(_boardState.AsSpan());
+            //board._boardState.AsSpan().CopyTo(_boardState.AsSpan());
+            _activeColor = board._activeColor;
+            _lastMove = board._lastMove;
+            _castlingRights = board._castlingRights;
         }
         /// <summary>
         /// Moves a piece on the board and alters the board state
@@ -139,7 +186,43 @@ namespace BenzChess
             {
                 Play(rookMove);
             }
+
+            //handle en passant
+            if (IsEnPassant(movingPiece, move, out int captureIndex))
+            {
+                _boardState[captureIndex] = Piece.None;
+            }
+
+            _lastMove = move;
+
+            UpdateCastlingRights(move.FromIndex);
+            UpdateCastlingRights(move.ToIndex);
+
+            _activeColor = FlipColor(_activeColor);
         }
+
+        /// <summary>
+        /// Toggles the active color
+        /// </summary>
+        /// <param name="color"></param>
+        /// <returns Color.Black></returns>
+        /// <returns Color.White></returns>
+        public static Color FlipColor(Color color)
+        {
+            if ((int)color == 0)
+            {
+                return Color.Black;
+            }
+            else
+            {
+                return Color.White;
+            }
+        }
+        /****************************************
+         *      CASTLING MECHANICS
+         ***************************************
+         */
+
         /// <summary>
         /// Checks to see if if the current move is a castling move.
         /// 
@@ -150,7 +233,8 @@ namespace BenzChess
         /// <param name="moving"></param>
         /// <param name="kingMove"></param>
         /// <param name="rookMove"></param>
-        /// <returns></returns>
+        /// <returns bool="true"></returns>
+        /// <returns bool="false"></returns>
         private bool IsCastle(Piece moving, Move move, out Move rookMove)
         {
             //check if the moving piece is a king
@@ -182,6 +266,70 @@ namespace BenzChess
             rookMove = default;
             return false;
         }
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="flag"></param>
+        /// <param name="state"></param>
+        /// <exception cref="NotImplementedException"></exception>
+        private void SetCastlingRights(CastlingRights flag, bool state)
+        {
+            if (state)
+            {
+                _castlingRights |= flag; //bitwise OR assignment operation
+            } else
+            {
+                _castlingRights &= ~flag; // current _castlingRights value BITWISE AND negation of _castlingRights value and stores it as the current value
+            }  
+        }
+
+        /// <summary>
+        /// updates the castling rights if the king or rook
+        /// has been moved.
+        /// </summary>
+        /// <param name="index"></param>
+        private void UpdateCastlingRights(int index)
+        {
+            if (index == WhiteKingSquare || index == WhiteKingsideRookSquare)
+            {
+                SetCastlingRights(CastlingRights.WhiteKingSide, false);
+            }
+            if (index == WhiteKingSquare || index == WhiteQueensideRookSquare)
+            {
+                SetCastlingRights(CastlingRights.WhiteQueenSide, false);
+            }
+            if (index == BlackKingSquare || index == BlackKingsideRookSquare)
+            {
+                SetCastlingRights(CastlingRights.BlackKingSide, false);
+            }
+            if (index == BlackKingSquare || index == BlackQueensideRookSquare)
+            {
+                SetCastlingRights(CastlingRights.BlackQueenSide, false);
+            }
+        }
+        /*************************
+         *   END CASTLING MECHANICS
+         *************************
+         */
+
+        /*****************************
+         **** 
+         ****   MOVE GENERATION
+         ****
+         *****************************
+         */
+        readonly int[] STRAIGHTS_FILE = new int[4] { -1, 0, 1, 0 };
+        readonly int[] STRAIGHTS_RANK = new int[4] { 0, -1, 0, 1 };
+
+        readonly int[] KING_FILE = new int[8] { -1, 0, 1, 1, 1, 0, -1, -1 };
+        readonly int[] KING_RANK = new int[8] { -1, -1, -1, 0, 1, 1, 1, 0 };
+
+        readonly int[] KNIGHT_FILE = new int[8] { -1, -2, 1, 2, -1, -2, 1, 2 };
+        readonly int[] KNIGHT_RANK = new int[8] { -2, -1, -2, -1, 2, 1, 2, 1 };
+
+        private static Board tempBoard = new Board(STARTING_POS_FEN);
+
         /// <summary>
         ///  Iterates over the 64 squares of the board and adds
         ///  available squares to a List<Move>. First checks to see if there
@@ -198,14 +346,10 @@ namespace BenzChess
 
             for (int squareIndex = 0; squareIndex < 64; squareIndex++)
             {
-                if (_boardState[squareIndex] == Piece.None)
-                    continue;
-
-                if ((_boardState[squareIndex] < Piece.BlackPawn) ^ _whiteMovesNext)   //XOR
-                    continue;
-                    
-                AddLegalMoves(moves, squareIndex);
-                
+                if(Pieces.IsColor(_boardState[squareIndex], _activeColor))
+                {
+                    AddLegalMoves(moves, squareIndex);
+                }
             }
             return moves;
         }
@@ -229,9 +373,83 @@ namespace BenzChess
                     AddWhitePawnMoves(moves, squareIndex);
                     AddWhitePawnAttacks(moves, squareIndex);
                     break;
+                case Piece.BlackRook:
+                case Piece.WhiteRook:
+                    AddRookMoves(moves, squareIndex);
+                    break;
+                case Piece.BlackKnight:
+                case Piece.WhiteKnight:
+                    AddKnightMoves(moves, squareIndex);
+                    break;
+                case Piece.BlackBishop:
+                case Piece.WhiteBishop:
+                    AddBishopMoves(moves, squareIndex);
+                    break;
+                case Piece.BlackQueen:
+                case Piece.WhiteQueen:
+                    AddQueenMoves(moves, squareIndex);
+                    break;
+                case Piece.BlackKing:
+                case Piece.WhiteKing:
+                    AddKingMoves(moves, squareIndex);
+                    break;
+             }
+        }
+        
+        private void Add(List<Move> moves, Move move, bool inCheck = true)
+        {
+            if (inCheck)
+            {
+                tempBoard.Copy(this);
+                tempBoard.Play(move);
+                if (tempBoard.IsChecked(_activeColor))
+                {
+                    return;
+                }
             }
+            moves.Add(move);
+        }
+        /**********************************************
+         * ***
+         *      TESTS TO DETERMINE IF KING IS IN CHECK
+         * ***
+         **********************************************
+         */
+         
+        /// <summary>
+        /// Checks to see if the king is in check.
+        /// The method searches the board for the king. The square index at which 
+        /// the king is currently placed is then checked to see if it is under attack
+        /// by another piece of the opposing color.
+        /// </summary>
+        /// <param name="color"></param>
+        /// <returns></returns>
+        /// <exception cref="MissingPieceException"></exception>
+        public bool IsInCheck(Color color)
+        {
+            Piece king = Pieces.GetPiece(PieceType.King, color);
+            for (int squareIndex = 0; squareIndex < 64; squareIndex++) //TO DO: optimization - find way to store king location instead of search
+            {
+                if(_boardState[squareIndex] == king)
+                {
+                    Color enemyColor = FlipColor(color);
+                    return IsSquareAttacked(squareIndex, enemyColor);
+                }
+            }
+            throw new MissingPieceException($"Board state is missing a {king}!");
         }
 
+        /// <summary>
+        /// Checks to see if the square is under attack
+        /// </summary>
+        /// <param name="index"></param>
+        /// <param name="enemyColor"></param>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
+        private bool IsSquareAttacked(int index, Color enemyColor)
+        {
+            throw new NotImplementedException();
+        }
         /**************************************
          **************************************
          * 
@@ -270,6 +488,7 @@ namespace BenzChess
                 moves.Add(new Move((byte)fromIndex, (byte)belowIndex, Piece.None));
             }
         }
+        
         /// <summary>
         /// Offset for the diagonal pawn attack rules 
         /// </summary>
@@ -280,126 +499,198 @@ namespace BenzChess
             int rank = Rank(index);
             int file = File(index);
 
-            //check diagonal left
+            //check diagonal  up & left
             if (IsValidSquare(rank + 1, file - 1, out int upLeft, out Piece pieceLeft))
             {
-                if (Pieces.IsBlack(pieceLeft))
+                if (Pieces.IsBlack(pieceLeft) || CanEnPassant(upLeft))
                 {
                     moves.Add(new Move((byte)index, (byte)upLeft, Piece.None));
                 }
             }
-            //check diagonal right
+            //check diagonal up & right
             if(IsValidSquare(rank + 1, file + 1, out int upRight, out Piece pieceRight))
             {
-                if (Pieces.IsBlack(pieceRight))
+                if (Pieces.IsBlack(pieceRight) || CanEnPassant(upRight))
                 {
                     moves.Add(new Move((byte)index, (byte)upRight, Piece.None));
                 }
             }
         }
-
-        private static bool IsValidSquare(int rank, int file, out int upLeft, out Piece peiceLeft)
-        {
-            if()
-        }
-        
-
-        /// <summary>
+         /// <summary>
         /// Offset for the diagonal pawn attack rules 
         /// </summary>
         /// <param name="moves"></param>
         /// <param name="fromIndex"></param
-        private void AddBlackPawnAttacks(List<Move> moves, int fromIndex)
+        private void AddBlackPawnAttacks(List<Move> moves, int index)
         {
+            int rank = Rank(index);
+            int file = File(index);
 
+            //check diagonal  down & left
+            if (IsValidSquare(rank - 1, file - 1, out int downLeft, out Piece pieceLeft))
+            {
+                if (Pieces.IsBlack(pieceLeft) || CanEnPassant(downLeft))
+                {
+                    moves.Add(new Move((byte)index, (byte)downLeft, Piece.None));
+                }
+            }
+            //check diagonal down & right
+            if (IsValidSquare(rank - 1, file + 1, out int downRight, out Piece pieceRight))
+            {
+                if (Pieces.IsBlack(pieceRight) || CanEnPassant(downRight))
+                {
+                    moves.Add(new Move((byte)index, (byte)downRight, Piece.None));
+                }
+            }
         }
 
-        /**************************************
-         **************************************
-         * 
-         *          ROOK MOVES 
-         *          
-         * ************************************
-         * ************************************
+        /// <summary>
+        /// Check if the move parameter is an en passant.
+        /// 
+        /// An en passant is a move that allows a pawn that has just advanced 2 squares
+        /// to be captured by a horizontally adjacent pawn piece.
+        /// </summary>
+        /// <param name="movingPiece"></param>
+        /// <param name="move"></param>
+        /// <param name="captureIndex"></param>
+        /// <returns bool></returns>
+        /// <exception cref="NotImplementedException"></exception>
+        private bool IsEnPassant(Piece movingPiece, Move move, out int captureIndex)
+        {
+            throw new NotImplementedException();
+        }
+
+        private bool CanEnPassant(int index)
+        {
+            throw new NotImplementedException();
+        }
+        /****************************************
+         *      END PAWN MOVES
+         ****************************************
+         ****************************************
+         *   ROOK, KNIGHT, BISHOP QUEEN MOVES
+         ****************************************
          */
+
         private void AddRookMoves(List<Move> moves, int fromIndex)
         {
-
+            throw new NotImplementedException();
         }
-        private void AddRookAttacks(List<Move> moves, int fromIndex)
-        {
+       
 
-        }
-
-        /**************************************
-         **************************************
-         * 
-         *          KNIGHT MOVES 
-         *          
-         * ************************************
-         * ************************************
-         */
+         
         private void AddKnightMoves(List<Move> moves, int fromIndex)
         {
-
+            throw new NotImplementedException();
         }
-        private void AddWKnightAttacks(List<Move> moves, int fromIndex)
-        {
+      
 
-        }
-
-        /**************************************
-         **************************************
-         * 
-         *          BISHOP MOVES  
-         *          
-         * ************************************
-         * ************************************
-         */
         private void AddBishopMoves(List<Move> moves, int fromIndex)
         {
+            throw new NotImplementedException();
 
         }
-        private void AddWBishopAttacks(List<Move> moves, int fromIndex)
-        {
-
-        }
-        /**************************************
-         **************************************
-         * 
-         *          QUEEN MOVES  
-         *          
-         * ************************************
-         * ************************************
-         */
+         
+       
         private void AddQueenMoves(List<Move> moves, int fromIndex)
         {
-
+        throw new NotImplementedException();
         }
-        public void AddQueenAttacks(List<Move> moves, int fromIndex)
-        {
-
-        }
-
-        /**************************************
-         **************************************
-         * 
-         *          KING MOVES 
-         *          
-         * ************************************
-         * ************************************
+       
+         /********************************************
+         *      END ROOK, BISHOP, KING, QUEEN MOVES
+         * *******************************************
+         * *******************************************
+         *             KING MOVES
+         *********************************************
          */
         private void AddKingMoves(List<Move> moves, int fromIndex)
         {
-
+            throw new NotImplementedException();
         }
-        private void AddKingAttacks (List<Move> moves, int fromIndex)
+
+
+        /*************************************
+         *  UTILITY FUNCTIONS
+         * ***********************************
+         */
+
+        /// <summary>
+        /// Checks if the rank & file is a valid square on the 8x8 chess board
+        /// </summary>
+        /// <param name="rank"></param>
+        /// <param name="file"></param>
+        /// <param name="piece"></param>
+        /// <returns bool="true"></returns>
+        /// <returns bool="false"></returns>
+        /// 
+        private bool IsValidSquare(int rank, int file, out Piece piece)
         {
-
+            if(rank >= 0 && rank <= 7 && file >=file && file <= 7)
+            {
+                piece = _boardState[rank * 8 + file];
+                return true;
+            }
+            piece = Piece.None;
+            return false;
         }
+        /// <summary>
+        /// Checks if the rank & file is a valid square on the 8x8 chess board
+        /// </summary>
+        /// <param name="rank"></param>
+        /// <param name="file"></param>
+        /// <param name="diagonal"></param>
+        /// <param name="piece"></param>
+        /// <returns bool="true"></returns>
+        /// <returns bool="false"></returns>
+        /// 
+        private bool IsValidSquare(int rank, int file, out int index, out Piece piece)
+        {
+            if (rank >= 0 && rank <= 7 && file >= 0 && file <= 7)
+            {
+                index = rank * 8 + file;
+                piece = _boardState[index];
+                return true;
+            }
+            index = -1;
+            piece = Piece.None;
+            return false;
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="activeColor"></param>
+        /// <returns bool="true"></returns>
+        /// <returns bool="false"></returns>
+        /// <exception cref="NotImplementedException"></exception>
+        private bool IsChecked(Color activeColor)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Check to see if there is a Piece occupying
+        /// a given square
+        /// </summary>
+        /// <param name="rank"></param>
+        /// <param name="file"></param>
+        /// <param name="piece"></param>
+        /// <returns bool="true"></returns>
+        /// <returns bool="false"></returns>
+        private bool IsPiece(int rank, int file, Piece piece)
+        {
+            if(rank >= 0 && rank <= 7 && file >= 0 && file <= 7)
+            {
+                return (_boardState[rank * 8 + file] == piece);
+            }
+            return false;
+        }
+      /*************************************
+       *    END  UTILITY FUNCTIONS
+       * ***********************************
+       */
         static void Main()
         {
         }
     }
-  
 }

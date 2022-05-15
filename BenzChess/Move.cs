@@ -89,11 +89,7 @@ namespace BenzChess
        
         public bool Equals(Move other)
         { 
-            if(this.Equals(other))
-            {
-                return true;
-            }
-            return false;
+            return (this.Equals(other));
         }
 
         /// <summary>
