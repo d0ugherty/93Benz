@@ -110,5 +110,22 @@ namespace BenzChess
             }
             return Piece.None;
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="color"></param>
+        /// <returns></returns>
+        public static Color Flip(Color color)
+        {
+            if (color == Color.Black)
+            {
+                return Color.White;
+            }
+            else
+            {
+                return Color.Black;
+            }
+        }
     }
+
 }

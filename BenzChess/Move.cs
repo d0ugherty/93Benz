@@ -24,6 +24,13 @@ namespace BenzChess
         public byte ToIndex;
         public Piece Promotion;
 
+
+        public Move(int from, int to)
+        {
+            FromIndex = (byte)from;
+            ToIndex = (byte)to;
+            Promotion = Piece.None;
+        }
         public Move(byte from, byte to, Piece promotion)
         {
             FromIndex = from;
