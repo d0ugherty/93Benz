@@ -436,10 +436,16 @@ namespace BenzChess
                     break;
             }
         }
-
-        private void Add(List<Move> moves, Move move, bool inCheck = true)
+        /// <summary>
+        /// Adds a move to the List moves if the move doesn't result in a
+        /// check for the active color
+        /// </summary>
+        /// <param name="moves"></param>
+        /// <param name="move"></param>
+        /// <param name="inCheck"></param>
+        private void Add(List<Move> moves, Move move, bool check = true)
         {
-            if (inCheck)
+            if (check)
             {
                 tempBoard.Copy(this);
                 tempBoard.Play(move);
@@ -516,10 +522,10 @@ namespace BenzChess
 
             for (int i = 0; i < 8; i++)
             {
-                //knight
+                //attacekd by knight
                 if (IsPiece(rank + KNIGHT_RANK[i], file + KNIGHT_FILE[i], knight))
                     return true;
-                //king
+                //attacked by another king
                 if (IsPiece(rank + KING_RANK[i], file + KING_FILE[i], king))
                     return true;
             }
@@ -529,7 +535,7 @@ namespace BenzChess
             Piece rook = Pieces.GetPiece(PieceType.Rook, enemyColor);
             for (int dir = 0; dir < 4; dir++)
             {
-                //queen or bishop
+                //attacked by queen or bishop
                 for (int i = 1; IsValidSquare(rank + i * DIAGONALS_RANK[dir], file + i * DIAGONALS_FILE[dir], out Piece piece); i++)
                 {
                     if (piece == bishop || piece == queen)
@@ -564,13 +570,34 @@ namespace BenzChess
         /// </summary>
         /// <param name="moves"></param>
         /// <param name="fromIndex"></param>
-        private void AddWhitePawnMoves(List<Move> moves, int fromIndex)
+        private void AddWhitePawnMoves(List<Move> moves, int index)
         {
-            int aboveIndex = fromIndex + 8; //white pawns move up the ranks
-            if (aboveIndex < 64 && _boardState[aboveIndex] == Piece.None)
+            //pawn cant move if the space in front is occupied
+            if (_boardState[Up(index)] != Piece.None)
+                return;
+
+            WhitePawnAdder(moves, new Move(index, Up(index)));
+
+            if (Rank(index) == 1 && _boardState[Up(index, 2)] == Piece.None)
+                Add(moves, new Move(index, Up(index, 2)));
+
+        }
+        /// <summary>
+        /// Checks if the target index is 0, if so, the pawn gets promoted
+        /// </summary>
+        /// <param name="moves"></param>
+        /// <param name="move"></param>
+        private void WhitePawnAdder(List<Move> moves, Move move)
+        {
+            if (Rank(move.ToIndex) == 0)
             {
-                moves.Add(new Move((byte)fromIndex, (byte)aboveIndex, Piece.None));
+                Add(moves, new Move(move.FromIndex, move.ToIndex, Piece.WhiteQueen));
+                Add(moves, new Move(move.FromIndex, move.ToIndex, Piece.WhiteRook));
+                Add(moves, new Move(move.FromIndex, move.ToIndex, Piece.WhiteKnight));
+                Add(moves, new Move(move.FromIndex, move.ToIndex, Piece.WhiteBishop));
             }
+            else
+                Add(moves, move);
         }
         /// <summary>
         /// Black pawns move down the ranks so the next available square will be
@@ -578,15 +605,32 @@ namespace BenzChess
         /// </summary>
         /// <param name="moves"></param>
         /// <param name="fromIndex"></param>
-        private void AddBlackPawnMoves(List<Move> moves, int fromIndex)
+        private void AddBlackPawnMoves(List<Move> moves, int index)
         {
-            int belowIndex = fromIndex - 8;
-            if (belowIndex >= 0 && _boardState[belowIndex] == Piece.None)
-            {
-                moves.Add(new Move((byte)fromIndex, (byte)belowIndex, Piece.None));
-            }
-        }
+            if (_boardState[Down(index)] != Piece.None)
+                return;
+            BlackPawnAdder(moves, new Move(index, Down(index)));
 
+            if(Rank(index) == 6 && _boardState[Down(index, 2)] == Piece.None)
+                Add(moves, new Move(index, Down(index, 2)));
+        }
+        /// <summary>
+        /// Checks if the target index is 0, if so, the pawn gets promoted
+        /// </summary>
+        /// <param name="moves"></param>
+        /// <param name="move"></param
+        private void BlackPawnAdder(List<Move> moves, Move move)
+        {
+            if (Rank(move.ToIndex) == 0)
+            {
+                Add(moves, new Move(move.FromIndex, move.ToIndex, Piece.BlackQueen));
+                Add(moves, new Move(move.FromIndex, move.ToIndex, Piece.BlackRook));
+                Add(moves, new Move(move.FromIndex, move.ToIndex, Piece.BlackKnight));
+                Add(moves, new Move(move.FromIndex, move.ToIndex, Piece.BlackBishop));
+            }
+            else
+                Add(moves, move);
+        }
         /// <summary>
         /// Offset for the diagonal pawn attack rules 
         /// </summary>
@@ -701,30 +745,80 @@ namespace BenzChess
          *   ROOK, KNIGHT, BISHOP QUEEN MOVES
          ****************************************
          */
-
-        private void AddRookMoves(List<Move> moves, int fromIndex)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="moves"></param>
+        /// <param name="index"></param>
+        private void AddRookMoves(List<Move> moves, int index)
         {
-            throw new NotImplementedException();
+             for(int dir = 0; dir < 4; dir++)
+            {
+                AddDirectionalMoves(moves, index, STRAIGHTS_RANK[dir], STRAIGHTS_FILE[dir]);
+            }
         }
 
 
-
-        private void AddKnightMoves(List<Move> moves, int fromIndex)
+        /// <summary>
+        /// Adds a possible move the List moves if the destination square is valid
+        /// and does not hold a piece of the same color (_activecolor)
+        /// </summary>
+        /// <param name="moves"></param>
+        /// <param name="index"></param>
+        private void AddKnightMoves(List<Move> moves, int index)
         {
-            throw new NotImplementedException();
+            int rank = Rank(index);
+            int file = File(index);
+
+            for (int i = 0; i < 8; i++)
+            {
+                if (IsValidSquare(rank + KNIGHT_RANK[i], file + KNIGHT_FILE[i], out int target, out Piece piece) && !Pieces.IsColor(piece, _activeColor))
+                    Add(moves, new Move(index, target));
+            }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="moves"></param>
+        /// <param name="fromIndex"></param>
+        /// <exception cref="NotImplementedException"></exception>
+        private void AddBishopMoves(List<Move> moves, int index)
+        {
+            for (int dir = 0; dir < 4; dir++)
+                AddDirectionalMoves(moves, index, DIAGONALS_RANK[dir], DIAGONALS_FILE[dir]);
+
         }
 
-
-        private void AddBishopMoves(List<Move> moves, int fromIndex)
-        {
-            throw new NotImplementedException();
-
-        }
-
-
+        /// <summary>
+        /// Queen movement is the union of the Bishop and Rook
+        /// </summary>
+        /// <param name="moves"></param>
+        /// <param name="fromIndex"></param>
         private void AddQueenMoves(List<Move> moves, int fromIndex)
         {
-            throw new NotImplementedException();
+           AddBishopMoves(moves, fromIndex);
+           AddRookMoves(moves, fromIndex);
+        }
+        /// <summary>
+        /// Helper method to calculate movement for the Rook and Bishop
+        /// </summary>
+        /// <param name="moves"></param>
+        /// <param name="index"></param>
+        /// <param name="dRank"></param>
+        /// <param name="dFile"></param>
+        private void AddDirectionalMoves(List<Move> moves, int index, int dRank, int dFile)
+        {
+            int rank = Rank(index);
+            int file = File(index);
+
+            for(int i = 1; IsValidSquare(rank + 1 * dRank, file + i * dFile, out int target, out Piece piece); i++)
+            {
+                if (!Pieces.IsColor(piece, _activeColor))
+                    Add(moves, new Move(index, target));
+
+                if (piece != Piece.None)
+                    break; //pieces other than the knight will have their movement blocked other pieces
+            }
         }
 
         /********************************************
