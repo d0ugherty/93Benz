@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Globalization;
 using System.Threading.Tasks;
 using System.Diagnostics;
 using System.IO;
@@ -35,6 +36,7 @@ namespace BenzChess
 
     public class Board
     {
+        
         static readonly int BlackKingSquare = Notation.ToSquare("e8");
         static readonly int WhiteKingSquare = Notation.ToSquare("e1");
         static readonly int BlackQueensideRookSquare = Notation.ToSquare("a8");
@@ -96,6 +98,7 @@ namespace BenzChess
             Copy(board);
             Play(move);
         }
+
         /// <summary>
         /// Sets up the board according a string paramter
         /// in Forsyth-Edwards Notation
@@ -326,7 +329,7 @@ namespace BenzChess
         /// <returens bool="false"></returens>
         private bool CanCastle(int kingSquare, int rookSquare, Color color)
         {
-            Color enemyColor = Pieces.Flip(color);
+            Color enemyColor = FlipColor(color);
             int gap = Math.Abs(rookSquare - kingSquare) - 1; //use absolute value to easily check both black & white 
             int dir = Math.Sign(rookSquare - kingSquare);
 
@@ -950,8 +953,6 @@ namespace BenzChess
        *    END  UTILITY FUNCTIONS
        * ***********************************
        */
-        static void Main()
-        {
-        }
+      
     }
 }

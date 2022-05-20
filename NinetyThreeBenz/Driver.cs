@@ -28,7 +28,7 @@ namespace NinetyThreeBenzEngine
                 switch (tokens[0])
                 {
                     case "uci": //tells the engine to use the Universal Chess Interface
-                        Console.WriteLine("id name 93Benz");
+                        Console.WriteLine("id name NinetyThreeBenzEngine");
                         Console.WriteLine("uciok");
                         break;
                     case "isready": //synchronizes the engine with the GUI
@@ -57,7 +57,7 @@ namespace NinetyThreeBenzEngine
                 }
             }
         }
-        static Board _board = null;
+        static Board? _board = null;
         /// <summary>
         /// Helper method to set up the position described in fenstring on the internal board and
         /// play the moves on the internal chess board.
@@ -92,7 +92,7 @@ namespace NinetyThreeBenzEngine
         /// </summary>
         /// <param name="tokens"></param>
         /// <returns board.GetLegalMoves().GetRandom().ToString();></returns>
-        public static string UCIBestMove(string[] tokens)
+        private static string UCIBestMove(string[] tokens)
         {
             //calculate the current position setup with "position" command
             return _board.GetLegalMoves().GetRandom().ToString();
@@ -103,7 +103,7 @@ namespace NinetyThreeBenzEngine
         /// </summary>
         /// <param name="moves"></param>
         /// <returns Move = moves></returns>
-        public static Move GetRandom(this List<Move> moves)
+        private static Move GetRandom(this List<Move> moves)
         {
             var rand = new Random();
             int index = rand.Next(moves.Count);
