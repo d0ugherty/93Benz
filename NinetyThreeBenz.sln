@@ -7,7 +7,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BenzChess", "BenzChess\Benz
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BenzBoard", "BenzBoard\BenzBoard.csproj", "{689B9CBF-BC94-4401-9A35-F563F36A718C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NinetyThreeBenzEngine", "NinetyThreeBenz\NinetyThreeBenzEngine.csproj", "{37C82356-C7CC-4928-95FB-F9DB13B22B29}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NinetyThreeBenzEngine", "NinetyThreeBenz\NinetyThreeBenzEngine.csproj", "{37C82356-C7CC-4928-95FB-F9DB13B22B29}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{E9B1FF62-35EF-4C93-862D-41F336149687}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -110,7 +110,20 @@ namespace BenzChess
             }
             return Piece.None;
         }
-       
+        /// <summary>
+        /// Toggles the active color
+        /// </summary>
+        /// <param name="color"></param>
+        /// <returns Color.Black></returns>
+        /// <returns Color.White></returns>
+        public static Color FlipColor(Color color)
+        {
+            if (color == Color.White)
+                return Color.Black;
+            else
+                return Color.White;
+
+        }
     }
 
 }

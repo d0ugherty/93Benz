@@ -22,7 +22,9 @@ namespace BoardViz
             {
                 Console.Write(">> Move: ");
                 string input = Console.ReadLine();
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
                 string[] moves = input.Split();
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
                 foreach (string move in moves)
                 {  
                     PlayMove(benzboard,move);

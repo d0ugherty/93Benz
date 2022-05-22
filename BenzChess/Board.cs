@@ -12,6 +12,8 @@ using System.Runtime.Serialization;
 
 namespace BenzChess
 {
+  
+
     /*  This class represents a chess board as an array
      *  of size 64.
      *  
@@ -36,7 +38,8 @@ namespace BenzChess
 
     public class Board
     {
-        
+       
+
         static readonly int BlackKingSquare = Notation.ToSquare("e8");
         static readonly int WhiteKingSquare = Notation.ToSquare("e1");
         static readonly int BlackQueensideRookSquare = Notation.ToSquare("a8");
@@ -48,7 +51,7 @@ namespace BenzChess
 
         /*** State Data ****/
         Piece[] _boardState = new Piece[64];
-        bool _whiteMovesNext = false;
+   
         CastlingRights _castlingRights = CastlingRights.All;
         Color _activeColor = Color.White;
         Move _lastMove = default(Move);
@@ -99,6 +102,10 @@ namespace BenzChess
             Play(move);
         }
 
+        public Board()
+        {
+        }
+
         /// <summary>
         /// Sets up the board according a string paramter
         /// in Forsyth-Edwards Notation
@@ -106,6 +113,7 @@ namespace BenzChess
         /// <param name="fen"></param>
         public void SetupPosition(string fen)
         {
+            
             //start position is "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
             string[] fields = fen.Split();
             if (fields.Length < 4)
@@ -178,6 +186,7 @@ namespace BenzChess
         /// <param name="move"></param>
         public void Play(Move move)
         {
+            
             Piece movingPiece = _boardState[move.FromIndex];
             if (move.Promotion != Piece.None)
             {
@@ -207,26 +216,9 @@ namespace BenzChess
             UpdateCastlingRights(move.FromIndex);
             UpdateCastlingRights(move.ToIndex);
 
-            _activeColor = FlipColor(_activeColor);
+            _activeColor = Pieces.FlipColor(_activeColor);
         }
 
-        /// <summary>
-        /// Toggles the active color
-        /// </summary>
-        /// <param name="color"></param>
-        /// <returns Color.Black></returns>
-        /// <returns Color.White></returns>
-        public static Color FlipColor(Color color)
-        {
-            if ((int)color == 0)
-            {
-                return Color.Black;
-            }
-            else
-            {
-                return Color.White;
-            }
-        }
         /****************************************
          *      CASTLING MECHANICS
          ***************************************
@@ -329,7 +321,7 @@ namespace BenzChess
         /// <returens bool="false"></returens>
         private bool CanCastle(int kingSquare, int rookSquare, Color color)
         {
-            Color enemyColor = FlipColor(color);
+            Color enemyColor = Pieces.FlipColor(color);
             int gap = Math.Abs(rookSquare - kingSquare) - 1; //use absolute value to easily check both black & white 
             int dir = Math.Sign(rookSquare - kingSquare);
 
@@ -386,6 +378,7 @@ namespace BenzChess
         /// <returns List = 'moves'></returns>
         public List<Move> GetLegalMoves()
         {
+           
             List<Move> moves = new List<Move>();
 
             for (int squareIndex = 0; squareIndex < 64; squareIndex++)
@@ -407,6 +400,7 @@ namespace BenzChess
         /// <param name="squareIndex"></param>
         private void AddLegalMoves(List<Move> moves, int squareIndex)
         {
+           
             switch (_boardState[squareIndex])
             {
                 case Piece.BlackPawn:
@@ -434,7 +428,11 @@ namespace BenzChess
                     AddQueenMoves(moves, squareIndex);
                     break;
                 case Piece.BlackKing:
+                    AddBlackCastlingMoves(moves);
+                    AddKingMoves(moves, squareIndex);
+                    break;
                 case Piece.WhiteKing:
+                    AddWhiteCastlingMoves(moves);
                     AddKingMoves(moves, squareIndex);
                     break;
             }
@@ -482,8 +480,8 @@ namespace BenzChess
             {
                 if (_boardState[squareIndex] == king)
                 {
-                    Color enemyColor = FlipColor(color);
-                    return IsSquareAttacked(squareIndex, enemyColor);
+                   
+                    return IsSquareAttacked(squareIndex, Pieces.FlipColor(_activeColor));
                 }
             }
             throw new MissingPieceException($"Board state is missing a {king}!");
@@ -890,7 +888,7 @@ namespace BenzChess
         /// 
         private bool IsValidSquare(int rank, int file, out Piece piece)
         {
-            if (rank >= 0 && rank <= 7 && file >= file && file <= 7)
+            if (rank >= 0 && rank <= 7 && file >= 7 && file <= 7)
             {
                 piece = _boardState[rank * 8 + file];
                 return true;
@@ -948,11 +946,14 @@ namespace BenzChess
         {
             return (_castlingRights & flag) == flag;
         }
-      
-      /*************************************
-       *    END  UTILITY FUNCTIONS
-       * ***********************************
-       */
-      
+
+        public Color GetColor() => _activeColor;
+
+        /*************************************
+         *    END  UTILITY FUNCTIONS
+         * ***********************************
+         */
+
     }
+
 }

@@ -77,26 +77,17 @@ namespace BenzChess
         /// </summary>
         /// <param name="obj"></param>
         /// <returns bool></returns>
+#pragma warning disable CS8765 // Nullability of type of parameter doesn't match overridden member (possibly because of nullability attributes).
         public override bool Equals(object obj)
-            
+#pragma warning restore CS8765 // Nullability of type of parameter doesn't match overridden member (possibly because of nullability attributes).
+
         {
             if(obj is Move move)
             {
-                return this.Equals(move);
+                Move other = (Move)obj;
+                return (FromIndex == other.FromIndex) && (ToIndex == other.ToIndex) && (Promotion == other.Promotion);
             }
             return false;
-        }
-       
-        /// <summary>
-        /// Override equals method to check equality
-        /// to other Move types
-        /// </summary>
-        /// <param name="other"></param>
-        /// <returns bool></returns>
-       
-        public bool Equals(Move other)
-        { 
-            return (this.Equals(other));
         }
 
         /// <summary>
