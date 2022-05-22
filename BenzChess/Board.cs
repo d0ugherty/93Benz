@@ -412,18 +412,26 @@ namespace BenzChess
                     AddWhitePawnAttacks(moves, squareIndex);
                     break;
                 case Piece.BlackRook:
+                    AddRookMoves(moves, squareIndex);
+                    break;
                 case Piece.WhiteRook:
                     AddRookMoves(moves, squareIndex);
                     break;
                 case Piece.BlackKnight:
+                    AddKnightMoves(moves, squareIndex);
+                    break;
                 case Piece.WhiteKnight:
                     AddKnightMoves(moves, squareIndex);
                     break;
                 case Piece.BlackBishop:
+                    AddBishopMoves(moves, squareIndex);
+                    break;
                 case Piece.WhiteBishop:
                     AddBishopMoves(moves, squareIndex);
                     break;
                 case Piece.BlackQueen:
+                    AddQueenMoves(moves, squareIndex);
+                    break;
                 case Piece.WhiteQueen:
                     AddQueenMoves(moves, squareIndex);
                     break;
